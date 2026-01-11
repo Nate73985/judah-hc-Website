@@ -1,0 +1,62 @@
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+interface HeroCarouselProps {
+  className?: string
+}
+
+const heroImages = [
+  '/images/healthcare_image_1.png',
+  '/images/healthcare_image_6.png',
+  '/images/healthcare_image_7.png',
+  '/images/healthcare_image_8.png',
+]
+
+export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % heroImages.length)
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className={`relative w-full h-96 md:h-[500px] rounded-lg shadow-2xl overflow-hidden ${className}`}>
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentIndex}
+          src={heroImages[currentIndex]}
+          alt="Professional caregiver providing compassionate home care"
+          className="w-full h-full object-cover"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          onError={(e) => {
+            const target = e.currentTarget as HTMLImageElement
+            target.style.display = 'none'
+          }}
+        />
+      </AnimatePresence>
+      
+      {/* Image indicators */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+        {heroImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`h-2 rounded-full transition-all ${
+              index === currentIndex
+                ? 'w-8 bg-white'
+                : 'w-2 bg-white/50 hover:bg-white/75'
+            }`}
+            aria-label={`Go to image ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
