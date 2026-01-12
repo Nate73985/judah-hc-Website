@@ -5,6 +5,8 @@ interface HeroCarouselProps {
   className?: string
 }
 
+// Files in public/ are served from root in Vite, regardless of base path
+// So we use absolute paths starting with /
 const heroImages = [
   '/images/healthcare_image_1.png',
   '/images/healthcare_image_6.png',
@@ -14,6 +16,7 @@ const heroImages = [
 
 export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,23 +26,39 @@ export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
     return () => clearInterval(interval)
   }, [])
 
+  const handleImageError = (index: number) => {
+    console.warn(`Failed to load hero image ${index + 1}: ${heroImages[index]}`)
+    setImageErrors((prev) => new Set(prev).add(index))
+  }
+
+  // If all images failed, show fallback
+  if (imageErrors.size === heroImages.length) {
+    return (
+      <div className={`relative w-full h-96 md:h-[500px] rounded-lg shadow-2xl overflow-hidden bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center ${className}`}>
+        <div className="text-primary-blue opacity-60 text-6xl">🏥</div>
+      </div>
+    )
+  }
+
   return (
     <div className={`relative w-full h-96 md:h-[500px] rounded-lg shadow-2xl overflow-hidden ${className}`}>
       <AnimatePresence mode="wait">
-        <motion.img
-          key={currentIndex}
-          src={heroImages[currentIndex]}
-          alt="Professional caregiver providing compassionate home care"
-          className="w-full h-full object-cover"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          onError={(e) => {
-            const target = e.currentTarget as HTMLImageElement
-            target.style.display = 'none'
-          }}
-        />
+        {!imageErrors.has(currentIndex) && (
+          <motion.img
+            key={currentIndex}
+            src={heroImages[currentIndex]}
+            alt={`Professional caregiver providing compassionate home care - Image ${currentIndex + 1}`}
+            className="w-full h-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            onError={() => handleImageError(currentIndex)}
+            onLoad={() => {
+              console.log(`Successfully loaded hero image ${currentIndex + 1}: ${heroImages[currentIndex]}`)
+            }}
+          />
+        )}
       </AnimatePresence>
       
       {/* Image indicators */}
