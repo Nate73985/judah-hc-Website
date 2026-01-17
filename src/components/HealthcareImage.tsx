@@ -20,9 +20,13 @@ export default function HealthcareImage({ type, className = '', alt }: Healthcar
   const [imageError, setImageError] = useState(false)
   const imageUrl = imageUrls[type]
 
-  // In Vite, files in public/ are served from root
-  // The base path from vite.config.ts doesn't affect public/ files
-  // So we use absolute paths starting with /
+  // Use import.meta.env.BASE_URL to handle base path for GitHub Pages
+  // Ensure proper path construction: baseUrl always ends with /, imageUrl never starts with /
+  const baseUrl = (import.meta.env.BASE_URL as string) || '/'
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+  const normalizedImagePath = imageUrl.startsWith('/') ? imageUrl.slice(1) : imageUrl
+  const fullImageUrl = `${normalizedBaseUrl}${normalizedImagePath}`
+
   if (imageError) {
     return (
       <div className={`bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-xl flex items-center justify-center ${className} min-h-[300px]`}>
@@ -33,16 +37,16 @@ export default function HealthcareImage({ type, className = '', alt }: Healthcar
 
   return (
     <img
-      src={imageUrl}
+      src={fullImageUrl}
       alt={alt}
       className={`rounded-lg shadow-xl w-full h-auto object-cover ${className}`}
       style={{ minHeight: '200px', display: 'block' }}
       onError={(e) => {
-        console.error(`Failed to load image: ${imageUrl}`, e)
+        console.error(`Failed to load image: ${fullImageUrl}`, e)
         setImageError(true)
       }}
       onLoad={() => {
-        console.log(`Successfully loaded image: ${imageUrl}`)
+        console.log(`Successfully loaded image: ${fullImageUrl}`)
       }}
       loading="lazy"
     />

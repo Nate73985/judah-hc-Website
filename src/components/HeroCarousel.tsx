@@ -5,8 +5,6 @@ interface HeroCarouselProps {
   className?: string
 }
 
-// Files in public/ are served from root in Vite, regardless of base path
-// So we use absolute paths starting with /
 const heroImages = [
   '/images/healthcare_image_1.png',
   '/images/healthcare_image_6.png',
@@ -18,6 +16,9 @@ export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
+  // Use import.meta.env.BASE_URL to handle base path for GitHub Pages
+  const baseUrl = (import.meta.env.BASE_URL as string) || '/'
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % heroImages.length)
@@ -26,8 +27,16 @@ export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
     return () => clearInterval(interval)
   }, [])
 
+  const getImageUrl = (index: number) => {
+    const imagePath = heroImages[index]
+    // Ensure proper path construction: baseUrl always ends with /, imagePath never starts with /
+    const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+    const normalizedImagePath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+    return `${normalizedBaseUrl}${normalizedImagePath}`
+  }
+
   const handleImageError = (index: number) => {
-    console.warn(`Failed to load hero image ${index + 1}: ${heroImages[index]}`)
+    console.warn(`Failed to load hero image ${index + 1}: ${getImageUrl(index)}`)
     setImageErrors((prev) => new Set(prev).add(index))
   }
 
@@ -46,7 +55,7 @@ export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
         {!imageErrors.has(currentIndex) && (
           <motion.img
             key={currentIndex}
-            src={heroImages[currentIndex]}
+            src={getImageUrl(currentIndex)}
             alt={`Professional caregiver providing compassionate home care - Image ${currentIndex + 1}`}
             className="w-full h-full object-cover"
             initial={{ opacity: 0 }}
@@ -55,7 +64,7 @@ export default function HeroCarousel({ className = '' }: HeroCarouselProps) {
             transition={{ duration: 0.5 }}
             onError={() => handleImageError(currentIndex)}
             onLoad={() => {
-              console.log(`Successfully loaded hero image ${currentIndex + 1}: ${heroImages[currentIndex]}`)
+              console.log(`Successfully loaded hero image ${currentIndex + 1}: ${getImageUrl(currentIndex)}`)
             }}
           />
         )}

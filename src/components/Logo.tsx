@@ -8,9 +8,15 @@ interface LogoProps {
 export default function Logo({ variant = 'blue', className = '' }: LogoProps) {
   const [imageError, setImageError] = useState(false)
   
-  const logoSrc = variant === 'blue' 
+  // Use import.meta.env.BASE_URL to handle base path for GitHub Pages
+  // Ensure proper path construction: baseUrl always ends with /, logoPath never starts with /
+  const baseUrl = (import.meta.env.BASE_URL as string) || '/'
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+  const logoPath = variant === 'blue' 
     ? '/JACHS LOGO BLUE.png' 
     : '/JACHS LOGO WHITE.png'
+  const normalizedLogoPath = logoPath.startsWith('/') ? logoPath.slice(1) : logoPath
+  const logoSrc = `${normalizedBaseUrl}${normalizedLogoPath}`
   const textColor = variant === 'blue' ? 'text-primary-blue' : 'text-white'
 
   // Show text fallback if image fails to load
