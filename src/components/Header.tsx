@@ -7,6 +7,11 @@ import Logo from './Logo'
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+  
+  // Use BASE_URL for image paths to support GitHub Pages
+  const baseUrl = (import.meta.env.BASE_URL as string) || '/'
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+  const fullLogoPath = `${normalizedBaseUrl}images/JHCS_Logo_Blue.png`
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -33,7 +38,13 @@ export default function Header() {
       <div className="container-custom">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center" aria-label="Judah Health Care Services Home">
+          <Link to="/" className="flex items-center gap-3" aria-label="Judah Health Care Services Home">
+            {/* Full Logo Image - Top Left */}
+            <img 
+              src={fullLogoPath} 
+              alt="Judah Healthcare Services Logo" 
+              className="h-12 md:h-16 w-auto flex-shrink-0 object-contain"
+            />
             <Logo variant="blue" className="h-12 md:h-16 w-auto" />
           </Link>
 
