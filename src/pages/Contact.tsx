@@ -125,12 +125,21 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Map */}
       <section className="section-padding bg-gray-50">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-primary-blue mb-8 text-center">Find Us</h2>
-          <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <p className="text-gray-500">Map placeholder - Embed Google Maps or preferred mapping service here</p>
+          <div className="rounded-lg overflow-hidden shadow-lg" style={{ height: '450px' }}>
+            <iframe
+              src="https://www.google.com/maps?q=56+Central+Avenue+Suite+314+Lynn+MA+01901&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Judah Health Care Services Location - 56 Central Avenue, Suite 314, Lynn, MA 01901"
+            />
           </div>
         </div>
       </section>
