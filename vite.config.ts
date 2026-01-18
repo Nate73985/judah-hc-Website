@@ -4,10 +4,10 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // Base path for GitHub Pages
-  // In production builds, this will be '/judah-hc-Website/'
-  // In dev mode, Vite will use '/' automatically even if base is set
-  base: '/judah-hc-Website/',
+  // Base path for custom domain deployment
+  // Use '/' for custom domains (like judahhealthcare.net)
+  // Use '/judah-hc-Website/' if deploying to GitHub Pages subpath
+  base: '/',
   build: {
     // Ensure assets are correctly placed in the build output
     assetsDir: 'assets',
